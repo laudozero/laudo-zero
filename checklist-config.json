@@ -1,0 +1,142 @@
+{
+  "versao": "1.0.0",
+  "marca": "LAUDO ZERO",
+  "titulo_relatorio": "RELATÓRIO FOTOGRÁFICO DE VISTORIA DE IMÓVEL",
+
+  "tipos_vistoria": [
+    { "numero": 1, "id": "entrega_novo", "rotulo": "Recebimento de Imóvel Novo / Entrega de Chaves" },
+    { "numero": 2, "id": "locacao_entrada", "rotulo": "Vistoria de Entrada (Locação)" },
+    { "numero": 3, "id": "locacao_saida", "rotulo": "Vistoria de Saída (Locação)" }
+  ],
+
+  "ambientes": [
+    { "numero": 1, "id": "sala", "rotulo": "Sala de Estar / Jantar" },
+    { "numero": 2, "id": "cozinha", "rotulo": "Cozinha / Área de Serviço" },
+    { "numero": 3, "id": "quarto", "rotulo": "Quarto" },
+    { "numero": 4, "id": "banheiro", "rotulo": "Banheiro / Lavabo" },
+    { "numero": 5, "id": "varanda", "rotulo": "Varanda / Sacada" },
+    { "numero": 6, "id": "fachada", "rotulo": "Fachada / Área Externa" },
+    { "numero": 7, "id": "garagem", "rotulo": "Garagem" }
+  ],
+
+  "complementos": [
+    { "numero": 1, "id": "principal", "rotulo": "Principal / Social" },
+    { "numero": 2, "id": "suite", "rotulo": "Suíte" },
+    { "numero": 3, "id": "secundario", "rotulo": "02 / Secundário" },
+    { "numero": 4, "id": "hospedes", "rotulo": "03 / Hóspedes" }
+  ],
+
+  "itens": [
+    {
+      "numero": 1,
+      "id": "piso_rodape",
+      "rotulo": "Piso e Rodapé",
+      "dica": "🔍 O que olhar: Dê leves batidinhas no piso (pode usar o cabo de uma vassoura ou a ponta do dedo) para ouvir se há som 'oco' (peça solta). Veja também se há pisos trincados, lascados, manchas, falhas no rejunte ou rodapés descolando. Em banheiros e varandas, jogue um pouco de água para ver se ela escorre direto para o ralo sem empoçar."
+    },
+    {
+      "numero": 2,
+      "id": "paredes_pintura",
+      "rotulo": "Paredes e Pintura",
+      "dica": "🔍 O que olhar: Observe a parede contra a luz para enxergar ondulações, manchas de umidade, bolhas ou pintura descascando. Procure rachaduras ou fissuras (especialmente nos cantos das portas e janelas) e veja se os cantos das paredes estão retos e bem acabados."
+    },
+    {
+      "numero": 3,
+      "id": "teto_forro_gesso",
+      "rotulo": "Teto / Forro / Gesso",
+      "dica": "🔍 O que olhar: Procure manchas amareladas ou escuras (sinal de infiltração do andar de cima ou telhado), mofo, bolhas na tinta ou rachaduras nas emendas do gesso e molduras."
+    },
+    {
+      "numero": 4,
+      "id": "portas_ferragens",
+      "rotulo": "Portas, Fechaduras e Ferragens",
+      "dica": "🔍 O que olhar: Abra e feche a porta algumas vezes para ver se ela raspa no chão ou no batente. Teste a chave e a maçaneta para ver se trancam suavemente sem precisar forçar, e observe se a madeira está riscada, inchada ou empenada."
+    },
+    {
+      "numero": 5,
+      "id": "janelas_esquadrias",
+      "rotulo": "Janelas, Vidros e Esquadrias",
+      "dica": "🔍 O que olhar: Abra e feche todas as folhas da janela para ver se deslizam fácil nos trilhos. Verifique se os vidros têm riscos ou trincas, se as travas fecham bem e se as borrachas de vedação estão inteiras (sem frestas por onde possa entrar água da chuva)."
+    },
+    {
+      "numero": 6,
+      "id": "tomadas_iluminacao",
+      "rotulo": "Tomadas, Interruptores e Iluminação",
+      "dica": "🔍 O que olhar: Leve um carregador de celular ou abajur pequeno e teste todas as tomadas uma por uma. Acenda e apague todos os interruptores e confira se os acabamentos (espelhos) estão firmes e bem encaixados na parede."
+    },
+    {
+      "numero": 7,
+      "id": "torneiras_pias_vasos",
+      "rotulo": "Torneiras, Pias, Vasos e Ralos",
+      "dica": "🔍 O que olhar: Abra as torneiras e chuveiros no máximo para testar a pressão da água e olhe embaixo da pia (no sifão) para ver se pinga água. Dê descarga no vaso sanitário, veja se ele está firme no chão e se a água desce rápido nos ralos sem voltar mau cheiro."
+    },
+    {
+      "numero": 8,
+      "id": "bancadas_revestimentos",
+      "rotulo": "Bancadas e Azulejos/Revestimentos",
+      "dica": "🔍 O que olhar: Passe a mão e olhe de perto as pedras das pias e bancadas procurando lascas, riscos ou manchas. Veja se a cuba (pia) está bem colada, se há vedação com silicone/rejunte entre a pedra e a parede para não infiltrar água, e bata levemente nos azulejos para checar se não estão ocos."
+    }
+  ],
+
+  "status_item": [
+    {
+      "numero": 1,
+      "id": "aprovado",
+      "rotulo": "✅ Aprovado (Tudo certo)",
+      "rotulo_pdf": "Aprovado",
+      "cor_pdf": "verde",
+      "foto": "opcional",
+      "pede_comentario": true
+    },
+    {
+      "numero": 2,
+      "id": "ressalva",
+      "rotulo": "⚠️ Com Ressalva (Pequeno detalhe/acabamento)",
+      "rotulo_pdf": "Com Ressalva",
+      "cor_pdf": "amarelo",
+      "foto": "obrigatoria",
+      "pede_comentario": true
+    },
+    {
+      "numero": 3,
+      "id": "nao_conforme",
+      "rotulo": "❌ Não Conforme (Defeito / Precisa de reparo)",
+      "rotulo_pdf": "Não Conforme",
+      "cor_pdf": "vermelho",
+      "foto": "obrigatoria",
+      "pede_comentario": true
+    },
+    {
+      "numero": 4,
+      "id": "nao_se_aplica",
+      "rotulo": "➖ Não se Aplica neste ambiente",
+      "rotulo_pdf": "Não se Aplica",
+      "cor_pdf": "cinza",
+      "foto": "nenhuma",
+      "pede_comentario": false
+    }
+  ],
+
+  "proximo_passo": [
+    { "numero": 1, "id": "outro_item", "rotulo": "Avaliar outro item neste mesmo ambiente" },
+    { "numero": 2, "id": "outro_ambiente", "rotulo": "Ir para outro ambiente" },
+    { "numero": 3, "id": "finalizar", "rotulo": "Finalizar vistoria e gerar meu Relatório PDF" }
+  ],
+
+  "regras": {
+    "foto_aprovado_opcao_avancar": "0",
+    "foto_concluir_opcao": "1",
+    "comentario_sem_observacoes_opcao": "0",
+    "comentario_sem_observacoes_texto": "Sem observações adicionais.",
+    "foto_minima_ressalva_e_nao_conforme": 1,
+    "entrada_livre": ["nome_cliente", "identificacao_imovel", "comentario_item"]
+  },
+
+  "mensagens": {
+    "pedir_nome": "Para começar, digite o seu nome completo.",
+    "pedir_identificacao": "Agora, informe a identificação do imóvel. Exemplo: Residencial Parque das Flores, Apto 304 - Torre B.",
+    "pedir_foto_opcional": "Envie uma ou mais fotos do item. Quando terminar, responda 1 para concluir ou 0 para avançar sem foto.",
+    "pedir_foto_obrigatoria": "⚠️ Neste caso é obrigatório enviar pelo menos 1 foto. Envie a(s) foto(s) do problema. Quando terminar, responda 1 para concluir as fotos.",
+    "pedir_comentario": "Descreva o que você encontrou (pode digitar ou enviar um áudio) ou responda 0 se não houver observações.",
+    "voucher_invalido": "Não encontrei um acesso válido com esse código. Confira se digitou corretamente. Se o seu acesso expirou ou já foi usado, você pode adquirir um novo em {{LINK_COMPRA}}."
+  }
+}

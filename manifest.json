@@ -1,0 +1,16 @@
+{
+  "name": "Laudo Zero - Autovistoria",
+  "short_name": "Laudo Zero",
+  "description": "Faça a vistoria do seu imóvel passo a passo e receba o relatório em PDF.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#101d66",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
