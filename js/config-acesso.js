@@ -4,6 +4,6 @@
 //
 // Enquanto estiver vazio, o app funciona SEM controle de acesso (modo aberto, útil para testes).
 export const ACESSO = {
-  url: '', // exemplo: https://abcdefghijkl.supabase.co
-  chave: '', // exemplo: sb_publishable_...
+  url: 'https://jjjnrecdmqvwfbubrdfm.supabase.co',
+  chave: 'sb_publishable_oI96AQ5zKc3or7Wx9NAGYg_eMz4wvnH',
 };
