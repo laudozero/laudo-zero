@@ -1,8 +1,8 @@
 // Guarda os arquivos do app no celular para funcionar sem internet.
-const VERSAO = 'lz-v1';
+const VERSAO = 'lz-v3';
 const ARQUIVOS = [
   './', './index.html', './manifest.json', './checklist-config.json',
-  './css/estilo.css', './js/app.js', './js/db.js', './js/pdf.js', './js/relatorio.js',
+  './css/estilo.css', './js/app.js', './js/db.js', './js/acesso.js', './js/config-acesso.js', './js/pdf.js', './js/relatorio.js',
   './assets/logo.png', './assets/logo.jpg', './assets/icon-192.png', './assets/icon-512.png',
 ];
 self.addEventListener('install', (e) => {

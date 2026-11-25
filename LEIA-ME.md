@@ -4,8 +4,8 @@ Este é o app completo, pronto para publicar de graça. Ele funciona no navegado
 pode ser instalado na tela inicial e guarda tudo no próprio aparelho do cliente.
 
 ## O que o app faz
-1. Pede nome, identificação do imóvel e tipo de vistoria.
-2. O cliente escolhe o ambiente (e qual, como "Suíte" ou "Secundário") e o item.
+1. Pede nome, nome do empreendimento (ou endereço), unidade e tipo de vistoria.
+2. O cliente escolhe o ambiente (Quarto e Suíte são ambientes separados), qual deles (Principal, 02, 03 até 10) e o item.
 3. Mostra a dica "O que olhar" e os 4 status (Aprovado, Com Ressalva, Não Conforme, Não se Aplica).
 4. Foto: obrigatória em Com Ressalva e Não Conforme; opcional em Aprovado; nenhuma em Não se Aplica.
 5. Comentário digitado (o microfone do teclado do celular serve para falar).
@@ -30,6 +30,11 @@ pode ser instalado na tela inicial e guarda tudo no próprio aparelho do cliente
 3. Gere o PDF e confira se abre e se as fotos aparecem.
 4. Teste fechar o navegador no meio e reabrir (deve oferecer continuar).
 5. Para instalar: no Android, menu do Chrome > **Instalar app**. No iPhone, Safari > Compartilhar > **Adicionar à Tela de Início**.
+
+## Controle de acesso (opcional, versão 2)
+O app já vem com a tela de entrada por e-mail + código da compra, 1 relatório por compra e prazo de validade.
+Ela só liga quando você preencher `js/config-acesso.js`. Enquanto estiver vazio, o app funciona em modo aberto.
+O passo a passo está em `GUIA-ACESSO.md`.
 
 ## Para mudar textos do checklist
 Edite o arquivo `checklist-config.json` (ambientes, itens, dicas). Não precisa mexer em código.

@@ -1,5 +1,6 @@
-import { salvarEstado, carregarEstado, salvarFoto, carregarFoto, apagarFoto, limparTudo } from './db.js';
+import { salvarEstado, carregarEstado, salvarFoto, carregarFoto, apagarFoto, limparTudo, salvarSessao, carregarSessao } from './db.js';
 import { gerarRelatorioPdf } from './relatorio.js';
+import { acessoAtivo, entrar, iniciarVistoria, mensagemDoMotivo, normalizarEmail, normalizarCodigo } from './acesso.js';
 
 const app = document.getElementById('app');
 const topoInfo = document.getElementById('topo-info');
@@ -8,6 +9,7 @@ const avisoEl = document.getElementById('aviso');
 let config = null;
 let estado = null;
 let pdfAtual = null; // { blob, nome }
+let sessao = null; // acesso confirmado: { email, codigo, validade_ate }
 const urlsFotos = new Map(); // id da foto -> URL temporária para mostrar a miniatura
 
 // ---------------------------------------------------------------- utilidades
@@ -44,7 +46,41 @@ function novoCodigo() {
 }
 
 function estadoNovo() {
-  return { v: 1, tela: 'dados', nome: '', imovel: '', tipoId: null, codigo: novoCodigo(), criadaEm: Date.now(), itens: [], atual: null };
+  return { v: 2, tela: 'dados', nome: '', imovel: '', unidade: '', tipoId: null, codigo: novoCodigo(), criadaEm: Date.now(), itens: [], atual: null, creditoOk: false };
+}
+
+// Vistorias iniciadas em versões anteriores usavam outros nomes de complemento; converte para os atuais.
+function migrar(e) {
+  if (!e) return e;
+  const novoId = { secundario: 'c02', hospedes: 'c03' };
+  const ajusta = (o) => {
+    if (!o) return;
+    if (o.ambienteId === 'quarto' && o.complementoId === 'suite') {
+      o.ambienteId = 'suite';
+      o.complementoId = 'principal';
+    } else if (novoId[o.complementoId]) {
+      o.complementoId = novoId[o.complementoId];
+    }
+  };
+  (e.itens ?? []).forEach(ajusta);
+  ajusta(e.atual);
+  if (typeof e.unidade !== 'string') e.unidade = '';
+  e.v = 2;
+  return e;
+}
+
+// Nome do arquivo: "Nome do empreendimento - DD-MM-AAAA.pdf" (sem acentos e sem os caracteres que o sistema de arquivos não aceita).
+function nomeDoArquivo(imovel, quando) {
+  const limpo = String(imovel ?? '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // sem acentos: evita nome quebrado em alguns aparelhos
+    .replace(/[\\/:*?"<>|\u0000-\u001f]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 60)
+    .replace(/[.\s]+$/, '');
+  const dd = String(quando.getDate()).padStart(2, '0');
+  const mm = String(quando.getMonth() + 1).padStart(2, '0');
+  return `${limpo || 'Vistoria'} - ${dd}-${mm}-${quando.getFullYear()}.pdf`;
 }
 
 function irPara(tela) {
@@ -104,7 +140,7 @@ async function removerFotoDoDisco(id) {
 function atualizarTopo() {
   topoInfo.replaceChildren();
   if (!estado || !estado.imovel) return;
-  topoInfo.append(h('strong', {}, estado.imovel));
+  topoInfo.append(h('strong', {}, estado.unidade ? `${estado.imovel} - ${estado.unidade}` : estado.imovel));
   const a = estado.atual;
   if (a?.ambienteId) {
     topoInfo.append(`${rotulo(config.ambientes, a.ambienteId)}${a.complementoId ? ' - ' + rotulo(config.complementos, a.complementoId) : ''}`);
@@ -128,7 +164,12 @@ TELAS.inicio = () => {
     h('button', {
       class: temAndamento ? 'botao sec' : 'botao',
       onclick: async () => {
-        if (temAndamento && !confirm('Isso apaga a vistoria em andamento neste aparelho. Deseja começar uma nova?')) return;
+        if (temAndamento) {
+          const aviso = acessoAtivo() && estado.creditoOk
+            ? 'Atenção: o seu acesso vale para 1 imóvel. Se apagar esta vistoria, não será possível iniciar outra com o mesmo acesso. Gere e salve o PDF antes. Apagar mesmo assim?'
+            : 'Isso apaga a vistoria em andamento neste aparelho. Deseja começar uma nova?';
+          if (!confirm(aviso)) return;
+        }
         await limparTudo();
         urlsFotos.forEach((u) => URL.revokeObjectURL(u));
         urlsFotos.clear();
@@ -141,32 +182,92 @@ TELAS.inicio = () => {
   ];
 };
 
+TELAS.acesso = () => {
+  const email = h('input', { type: 'text', id: 'email', inputmode: 'email', autocomplete: 'email', autocapitalize: 'none', placeholder: 'O mesmo e-mail usado na compra' });
+  const codigo = h('input', { type: 'text', id: 'codigo', autocapitalize: 'characters', autocomplete: 'off', placeholder: 'Ex.: HP12345678901234' });
+  const erro = h('div', { class: 'alerta', hidden: true, role: 'alert' });
+  const botao = h('button', { class: 'botao', style: 'margin-top:14px' }, 'Entrar');
+  botao.addEventListener('click', async () => {
+    erro.hidden = true;
+    if (!email.value.includes('@')) { avisar('Digite o e-mail da compra.'); email.focus(); return; }
+    if (normalizarCodigo(codigo.value).length < 6) { avisar('Digite o código da compra.'); codigo.focus(); return; }
+    botao.disabled = true;
+    botao.textContent = 'Confirmando...';
+    const resultado = await entrar(email.value, codigo.value);
+    botao.disabled = false;
+    botao.textContent = 'Entrar';
+    if (!resultado.ok) {
+      erro.textContent = mensagemDoMotivo(resultado.motivo);
+      erro.hidden = false;
+      return;
+    }
+    sessao = { email: normalizarEmail(email.value), codigo: normalizarCodigo(codigo.value), validade_ate: resultado.validade_ate };
+    await salvarSessao(sessao).catch(() => {});
+    render('inicio');
+  });
+  return [
+    h('h1', {}, 'Acesse sua vistoria'),
+    h('p', { class: 'sub' }, 'Digite o e-mail e o código da compra que você recebeu da Hotmart.'),
+    h('label', { for: 'email' }, 'E-mail da compra'),
+    email,
+    h('label', { for: 'codigo' }, 'Código da compra'),
+    codigo,
+    h('p', { class: 'pequeno', style: 'margin-top:8px' }, 'O código está no e-mail de confirmação da compra, com o nome "código da transação". Ele começa com HP.'),
+    erro,
+    botao,
+    h('p', { class: 'pequeno' }, 'Cada compra vale para 1 imóvel. É preciso internet só para entrar e para iniciar a vistoria.'),
+  ];
+};
+
 TELAS.dados = () => {
+  const erro = h('div', { class: 'alerta', hidden: true, role: 'alert' });
+  const botao = h('button', { class: 'botao', style: 'margin-top:14px' }, 'Continuar');
+  botao.addEventListener('click', async () => {
+    const n = nome.value.trim();
+    const i = imovel.value.trim();
+    erro.hidden = true;
+    if (n.length < 3) { avisar('Digite seu nome completo.'); nome.focus(); return; }
+    if (i.length < 3) { avisar('Informe o nome do empreendimento ou o endereço.'); imovel.focus(); return; }
+    estado.nome = n;
+    estado.imovel = i;
+    estado.unidade = unidade.value.trim();
+    // Com controle de acesso ligado, o crédito é descontado aqui, uma única vez por vistoria.
+    if (acessoAtivo() && !estado.creditoOk) {
+      botao.disabled = true;
+      botao.textContent = 'Confirmando seu acesso...';
+      const resultado = await iniciarVistoria(sessao.email, sessao.codigo, estado.codigo, ''); // o imóvel não é enviado ao servidor (privacidade)
+      botao.disabled = false;
+      botao.textContent = 'Continuar';
+      if (!resultado.ok) {
+        erro.textContent = mensagemDoMotivo(resultado.motivo);
+        erro.hidden = false;
+        return;
+      }
+      estado.creditoOk = true;
+    }
+    irPara('tipo');
+  });
   const nome = h('input', { type: 'text', id: 'nome', autocomplete: 'name', value: estado.nome, placeholder: 'Seu nome completo' });
   const imovel = h('input', {
     type: 'text', id: 'imovel', value: estado.imovel,
-    placeholder: 'Ex.: Residencial Parque das Flores, Apto 304 - Torre B',
+    placeholder: 'Ex.: Residencial Parque das Flores',
+  });
+  const unidade = h('input', {
+    type: 'text', id: 'unidade', value: estado.unidade ?? '',
+    placeholder: 'Ex.: Apto 304 - Torre B',
   });
   return [
     h('h1', {}, 'Dados da vistoria'),
     h('p', { class: 'sub' }, 'Essas informações aparecem no relatório.'),
     h('label', { for: 'nome' }, 'Nome completo do proprietário'),
     nome,
-    h('label', { for: 'imovel' }, 'Identificação do imóvel'),
+    h('label', { for: 'imovel' }, 'Nome do empreendimento ou endereço'),
     imovel,
-    h('p', { class: 'pequeno', style: 'margin-top:8px' }, 'Informe empreendimento, unidade e torre, ou o endereço.'),
-    h('button', {
-      class: 'botao', style: 'margin-top:14px',
-      onclick: () => {
-        const n = nome.value.trim();
-        const i = imovel.value.trim();
-        if (n.length < 3) { avisar('Digite seu nome completo.'); nome.focus(); return; }
-        if (i.length < 3) { avisar('Informe a identificação do imóvel.'); imovel.focus(); return; }
-        estado.nome = n;
-        estado.imovel = i;
-        irPara('tipo');
-      },
-    }, 'Continuar'),
+    h('p', { class: 'pequeno', style: 'margin-top:8px' }, 'Esse nome também será o nome do arquivo PDF.'),
+    h('label', { for: 'unidade' }, 'Unidade (apartamento, torre, casa)'),
+    unidade,
+    erro,
+    botao,
   ];
 };
 
@@ -200,7 +301,7 @@ TELAS.ambiente = () => {
 TELAS.complemento = () => [
   h('button', { class: 'voltar', onclick: () => irPara('ambiente') }, '< Voltar'),
   h('h1', {}, rotulo(config.ambientes, estado.atual.ambienteId)),
-  h('p', { class: 'sub' }, 'Qual deles? Isso diferencia cômodos iguais, como duas suítes.'),
+  h('p', { class: 'sub' }, 'Qual deles? Use Principal para o primeiro e 02, 03... para os demais cômodos iguais, como o segundo quarto.'),
   h('ul', { class: 'lista' },
     config.complementos.map((c) =>
       h('li', {}, h('button', {
@@ -457,11 +558,12 @@ TELAS.final = () => {
         }
         itens.push({ ...i, fotos });
       }
+      const agora = new Date();
       const blob = await gerarRelatorioPdf({
-        vistoria: { codigo: estado.codigo, nome: estado.nome, imovel: estado.imovel, tipoId: estado.tipoId, finalizadaEm: Date.now() },
+        vistoria: { codigo: estado.codigo, nome: estado.nome, imovel: estado.imovel, unidade: estado.unidade, tipoId: estado.tipoId, finalizadaEm: agora.getTime() },
         itens, config, logoBytes,
       });
-      pdfAtual = { blob, nome: `Relatorio-Laudo-Zero-${estado.codigo}.pdf` };
+      pdfAtual = { blob, nome: nomeDoArquivo(estado.imovel, agora) };
       mostrarPdf();
     } catch (e) {
       console.error(e);
@@ -492,6 +594,11 @@ TELAS.final = () => {
 function render(forcar) {
   let tela = forcar || estado.tela;
   if (!TELAS[tela]) tela = 'inicio';
+  // Controle de acesso: sem login, só a tela de acesso; sem crédito descontado, só início e dados.
+  if (acessoAtivo()) {
+    if (!sessao) tela = 'acesso';
+    else if (!estado.creditoOk && !['inicio', 'acesso', 'dados'].includes(tela)) tela = estado.nome ? 'dados' : 'inicio';
+  }
   // evita telas que dependem de um item em edição que não existe mais
   const precisaAtual = ['complemento', 'item', 'avaliar', 'fotos', 'comentario', 'proximo'];
   if (precisaAtual.includes(tela) && !estado.atual) tela = 'ambiente';
@@ -519,13 +626,18 @@ async function iniciar() {
     return;
   }
   try {
-    estado = (await carregarEstado()) || null;
+    estado = migrar((await carregarEstado()) || null);
   } catch {
     estado = null;
   }
   if (!estado) {
     estado = estadoNovo();
     estado.tela = 'inicio';
+  }
+  try {
+    sessao = (await carregarSessao()) || null;
+  } catch {
+    sessao = null;
   }
   render('inicio');
   navigator.storage?.persist?.().catch(() => {});

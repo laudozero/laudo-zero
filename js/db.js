@@ -33,5 +33,10 @@ export const carregarEstado = () => pedido('estado', 'readonly', (s) => s.get('a
 export const salvarFoto = (foto) => pedido('fotos', 'readwrite', (s) => s.put(foto));
 export const carregarFoto = (id) => pedido('fotos', 'readonly', (s) => s.get(id));
 export const apagarFoto = (id) => pedido('fotos', 'readwrite', (s) => s.delete(id));
+// Apaga a vistoria em andamento e as fotos. Não apaga o acesso (login) do cliente.
 export const limparTudo = () =>
-  Promise.all([pedido('estado', 'readwrite', (s) => s.clear()), pedido('fotos', 'readwrite', (s) => s.clear())]);
+  Promise.all([pedido('estado', 'readwrite', (s) => s.delete('atual')), pedido('fotos', 'readwrite', (s) => s.clear())]);
+
+// Acesso confirmado (e-mail + código da compra), guardado no aparelho
+export const salvarSessao = (sessao) => pedido('estado', 'readwrite', (s) => s.put(sessao, 'sessao'));
+export const carregarSessao = () => pedido('estado', 'readonly', (s) => s.get('sessao'));

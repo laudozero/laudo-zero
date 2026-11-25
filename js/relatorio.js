@@ -45,7 +45,7 @@ async function bytesDe(blob) {
 }
 
 /**
- * @param vistoria { codigo, nome, imovel, tipoId, finalizadaEm }
+ * @param vistoria { codigo, nome, imovel, unidade, tipoId, finalizadaEm }
  * @param itens    [{ ordem, ambienteId, complementoId, itemId, status, comentario, fotos:[{blob}] }]
  * @param config   conteúdo de checklist-config.json
  * @param logoBytes Uint8Array do logo em JPEG
@@ -118,7 +118,8 @@ export async function gerarRelatorioPdf({ vistoria, itens, config, logoBytes }) 
   titulo('Identificação');
   const linhasId = [
     ['Cliente / proprietário', vistoria.nome || '-'],
-    ['Imóvel', vistoria.imovel || '-'],
+    ['Empreendimento / endereço', vistoria.imovel || '-'],
+    ...(vistoria.unidade ? [['Unidade', vistoria.unidade]] : []),
     ['Tipo de vistoria', rotulos.tipo[vistoria.tipoId] ?? '-'],
     ['Modalidade', 'Autovistoria guiada, realizada pelo próprio proprietário'],
   ].map(([rotulo, valor]) => ({ rotulo, linhas: quebrarLinhas(valor, 10.5, false, CW - 24) }));

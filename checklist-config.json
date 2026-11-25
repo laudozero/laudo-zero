@@ -2,30 +2,117 @@
   "versao": "1.0.0",
   "marca": "LAUDO ZERO",
   "titulo_relatorio": "RELATÓRIO FOTOGRÁFICO DE VISTORIA DE IMÓVEL",
-
   "tipos_vistoria": [
-    { "numero": 1, "id": "entrega_novo", "rotulo": "Recebimento de Imóvel Novo / Entrega de Chaves" },
-    { "numero": 2, "id": "locacao_entrada", "rotulo": "Vistoria de Entrada (Locação)" },
-    { "numero": 3, "id": "locacao_saida", "rotulo": "Vistoria de Saída (Locação)" }
+    {
+      "numero": 1,
+      "id": "entrega_novo",
+      "rotulo": "Recebimento de Imóvel Novo / Entrega de Chaves"
+    },
+    {
+      "numero": 2,
+      "id": "locacao_entrada",
+      "rotulo": "Vistoria de Entrada (Locação)"
+    },
+    {
+      "numero": 3,
+      "id": "locacao_saida",
+      "rotulo": "Vistoria de Saída (Locação)"
+    }
   ],
-
   "ambientes": [
-    { "numero": 1, "id": "sala", "rotulo": "Sala de Estar / Jantar" },
-    { "numero": 2, "id": "cozinha", "rotulo": "Cozinha / Área de Serviço" },
-    { "numero": 3, "id": "quarto", "rotulo": "Quarto" },
-    { "numero": 4, "id": "banheiro", "rotulo": "Banheiro / Lavabo" },
-    { "numero": 5, "id": "varanda", "rotulo": "Varanda / Sacada" },
-    { "numero": 6, "id": "fachada", "rotulo": "Fachada / Área Externa" },
-    { "numero": 7, "id": "garagem", "rotulo": "Garagem" }
+    {
+      "numero": 1,
+      "id": "sala",
+      "rotulo": "Sala de Estar / Jantar"
+    },
+    {
+      "numero": 2,
+      "id": "cozinha",
+      "rotulo": "Cozinha / Área de Serviço"
+    },
+    {
+      "numero": 3,
+      "id": "quarto",
+      "rotulo": "Quarto"
+    },
+    {
+      "numero": 4,
+      "id": "suite",
+      "rotulo": "Suíte"
+    },
+    {
+      "numero": 5,
+      "id": "banheiro",
+      "rotulo": "Banheiro / Lavabo"
+    },
+    {
+      "numero": 6,
+      "id": "varanda",
+      "rotulo": "Varanda / Sacada"
+    },
+    {
+      "numero": 7,
+      "id": "fachada",
+      "rotulo": "Fachada / Área Externa"
+    },
+    {
+      "numero": 8,
+      "id": "garagem",
+      "rotulo": "Garagem"
+    }
   ],
-
   "complementos": [
-    { "numero": 1, "id": "principal", "rotulo": "Principal / Social" },
-    { "numero": 2, "id": "suite", "rotulo": "Suíte" },
-    { "numero": 3, "id": "secundario", "rotulo": "02 / Secundário" },
-    { "numero": 4, "id": "hospedes", "rotulo": "03 / Hóspedes" }
+    {
+      "numero": 1,
+      "id": "principal",
+      "rotulo": "Principal"
+    },
+    {
+      "numero": 2,
+      "id": "c02",
+      "rotulo": "02"
+    },
+    {
+      "numero": 3,
+      "id": "c03",
+      "rotulo": "03"
+    },
+    {
+      "numero": 4,
+      "id": "c04",
+      "rotulo": "04"
+    },
+    {
+      "numero": 5,
+      "id": "c05",
+      "rotulo": "05"
+    },
+    {
+      "numero": 6,
+      "id": "c06",
+      "rotulo": "06"
+    },
+    {
+      "numero": 7,
+      "id": "c07",
+      "rotulo": "07"
+    },
+    {
+      "numero": 8,
+      "id": "c08",
+      "rotulo": "08"
+    },
+    {
+      "numero": 9,
+      "id": "c09",
+      "rotulo": "09"
+    },
+    {
+      "numero": 10,
+      "id": "c10",
+      "rotulo": "10"
+    }
   ],
-
   "itens": [
     {
       "numero": 1,
@@ -76,7 +163,6 @@
       "dica": "🔍 O que olhar: Passe a mão e olhe de perto as pedras das pias e bancadas procurando lascas, riscos ou manchas. Veja se a cuba (pia) está bem colada, se há vedação com silicone/rejunte entre a pedra e a parede para não infiltrar água, e bata levemente nos azulejos para checar se não estão ocos."
     }
   ],
-
   "status_item": [
     {
       "numero": 1,
@@ -115,22 +201,35 @@
       "pede_comentario": false
     }
   ],
-
   "proximo_passo": [
-    { "numero": 1, "id": "outro_item", "rotulo": "Avaliar outro item neste mesmo ambiente" },
-    { "numero": 2, "id": "outro_ambiente", "rotulo": "Ir para outro ambiente" },
-    { "numero": 3, "id": "finalizar", "rotulo": "Finalizar vistoria e gerar meu Relatório PDF" }
+    {
+      "numero": 1,
+      "id": "outro_item",
+      "rotulo": "Avaliar outro item neste mesmo ambiente"
+    },
+    {
+      "numero": 2,
+      "id": "outro_ambiente",
+      "rotulo": "Ir para outro ambiente"
+    },
+    {
+      "numero": 3,
+      "id": "finalizar",
+      "rotulo": "Finalizar vistoria e gerar meu Relatório PDF"
+    }
   ],
-
   "regras": {
     "foto_aprovado_opcao_avancar": "0",
     "foto_concluir_opcao": "1",
     "comentario_sem_observacoes_opcao": "0",
     "comentario_sem_observacoes_texto": "Sem observações adicionais.",
     "foto_minima_ressalva_e_nao_conforme": 1,
-    "entrada_livre": ["nome_cliente", "identificacao_imovel", "comentario_item"]
+    "entrada_livre": [
+      "nome_cliente",
+      "identificacao_imovel",
+      "comentario_item"
+    ]
   },
-
   "mensagens": {
     "pedir_nome": "Para começar, digite o seu nome completo.",
     "pedir_identificacao": "Agora, informe a identificação do imóvel. Exemplo: Residencial Parque das Flores, Apto 304 - Torre B.",
